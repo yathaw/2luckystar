@@ -7,9 +7,18 @@ use App\Models\Brand;
 
 use Illuminate\Http\Request;
 use DataTables;
+use Auth;
 
 class CarController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:ကားအမျိုးအစား-အားလုံးကြည့်မည်');
+        $this->middleware('permission:ကားအမျိုးအစား-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:ကားအမျိုးအစား-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:ကားအမျိုးအစား-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         $brands = Brand::latest()->get();
@@ -34,15 +43,25 @@ class CarController extends Controller
                         return $car->brand->name;
                     })
                     ->addColumn('action', function($row){
-   
-                        $btn = '<div class="buttons">';
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-duration="'.$row->duration.'" data-brandid="'.$row->brand_id.'" data-brandname="'.$row->brand->name.'">
-                                    <i class="bi bi-gear btnicon"></i>
-                                </a>';
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
-                                    <i class="bi bi-x btnicon"></i>
-                                </a>';
+
+                        $user = Auth::user();
+
+                        $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['ကားအမျိုးအစား-ပြင်ဆင်မည်'])){
+   
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-duration="'.$row->duration.'" data-brandid="'.$row->brand_id.'" data-brandname="'.$row->brand->name.'">
+                                        <i class="bi bi-gear btnicon"></i>
+                                    </a>';
+
+                        }
+
+                        if($user->hasAnyPermission(['ကားအမျိုးအစား-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                                        <i class="bi bi-x btnicon"></i>
+                                    </a>';
+                        }
                         
                         $btn = $btn.'</div>';
     

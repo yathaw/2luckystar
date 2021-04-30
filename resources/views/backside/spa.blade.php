@@ -65,7 +65,24 @@
             
             <form>
                 <input type="hidden" name="id" id="id">
+                <input type="hidden" name="oldimage" id="oldimage">
+
                 <div class="modal-body">
+                    <div class="form-group my-3">
+                        <label for="firstName1"> Images :</label>
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" name="image" />
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div id="imagePreview" style="background-image: url({{ asset('assets/preview.png') }});">
+                                </div>
+                            </div>
+                        </div>                                  
+                        
+                    </div>
+
                     <div class="form-group">
                         <label for="name" class="mmfont"> SPA အမည် </label>
                         <input type="text" class="form-control" id="name" aria-describedby="emailHelp" name="name">
@@ -117,7 +134,11 @@
             
 
             <div class="modal-body">
+
                 <h3 id="d_name"></h3>
+
+                <img class="img-thumbnail rounded mr-2 mb-2 mx-auto d-block" id="show_photo" alt="Placeholder" width="500" height="300">
+
 
                 <h5 id="d_price" class="text-danger"></h5>
                 
@@ -143,6 +164,21 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
+            });
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#imagePreview').css('background-image', 'url('+e.target.result +')');
+                        $('#imagePreview').hide();
+                        $('#imagePreview').fadeIn(650);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            $("#imageUpload").change(function() {
+                readURL(this);
             });
 
             var quill = new Quill("#full", { 
@@ -288,7 +324,6 @@
                 e.preventDefault();
                 
                 
-
                 var about = document.querySelector('textarea[name=description]');
 
                 var quillData = quill.getContents();
@@ -381,6 +416,8 @@
                 var price = $(this).data('price');
                 var codeno = $(this).data('codeno');
                 var description = $(this).data('description');
+                var photo = $(this).data('photo');
+
 
                 $('#d_name').html(name);
 
@@ -388,6 +425,7 @@
 
                 $('#d_description').html(description);
 
+                $('#show_photo').attr({src: photo});
 
                 $("#detailTitle").html('Detail For '+codeno); 
 
@@ -401,6 +439,15 @@
                 var name = $(this).data('name');
                 var price = $(this).data('price');
                 var description = $(this).data('description');
+                var photo = $(this).data('photo');
+
+
+                $('#id').val(id);
+                $('#name').val(name);
+                $('#oldimage').val(photo);
+
+                $('#imagePreview').css('background-image', 'url('+photo+')');
+
 
                 quill.clipboard.dangerouslyPasteHTML(`${description}`);
 
@@ -423,11 +470,7 @@
             $("#showModal").on('submit','#editForm',function(e){
                 e.preventDefault();
                 
-                var formData = new FormData(this);
-
                 var id = $('#id').val();
-                var name = $('#name').val();
-                var price = $('#price').val();
 
                 var about = document.querySelector('textarea[name=description]');
 
@@ -435,20 +478,26 @@
                 var quillText = quill.getText();
                 var quillHtml = quill.root.innerHTML.trim();
 
+                console.log(quillHtml);
+
                 about.value =  quillHtml;
 
-                var description = $('#hiddenArea').val();
-
-
-                
+                console.log($('#hiddenArea').val());
                 var url="{{route('spa.update',':id')}}";
                 url=url.replace(':id',id);
 
+                console.log(url);
+                var formData = new FormData(this);
+                
+
                 $.ajax({
-                    data: {name:name, price:price, description:description},
+                    data: formData,
                     url: url,
-                    type: "PUT",
+                    type: "POST",
                     dataType: 'json',
+                    cache:false,
+                    contentType: false,
+                    processData: false,
                     success: function (data){
 
                         $('#editForm').trigger("reset");

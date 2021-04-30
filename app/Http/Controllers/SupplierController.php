@@ -6,9 +6,18 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class SupplierController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware('permission:supplier-အားလုံးကြည့်မည်');
+        $this->middleware('permission:supplier-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:supplier-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:supplier-ဖျက်မည်', ['only' => ['destroy']]);
+    }
     
     public function index()
     {
@@ -37,14 +46,22 @@ class SupplierController extends Controller
 
                     ->addColumn('action', function($row){
 
+                        $user = Auth::user();
+
                         $btn = '<div class="buttons">';
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-phone="'.$row->phoneno.'" data-address="'.$row->address.'" data-note="'.$row->note.'">
+                        if($user->hasAnyPermission(['supplier-ပြင်ဆင်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-phone="'.$row->phoneno.'" data-address="'.$row->address.'" data-note="'.$row->note.'">
                                     <i class="bi bi-gear btnicon"></i>
                                 </a>';
+                        }
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                        if($user->hasAnyPermission(['supplier-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
                                     <i class="bi bi-x btnicon"></i>
                                 </a>';
+                        }
                         
                         $btn = $btn.'</div>';
    

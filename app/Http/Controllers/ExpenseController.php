@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:အသုံးစာရင်း-အားလုံးကြည့်မည်');
+        $this->middleware('permission:အသုံးစာရင်း-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:အသုံးစာရင်း-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:အသုံးစာရင်း-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         $now = Carbon::now();
@@ -61,19 +69,29 @@ class ExpenseController extends Controller
                     })
                     ->addColumn('action', function($row){
                         $btn = '<div class="buttons">';
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" 
-                        data-title="'.$row->title.'" 
-                        data-expensedate ="'.$row->expensedate.'"
-                        data-amount ="'.$row->amount.'"
-                        data-status ="'.$row->status.'"
-                        data-expensetype_id ="'.$row->expensetype_id.'"
-                        >
-                                    <i class="bi bi-gear btnicon"></i>
-                                </a>';
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
-                                    <i class="bi bi-x btnicon"></i>
-                                </a>';
+                        $user = Auth::user();
+
+                        $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['အသုံးစာရင်း-ပြင်ဆင်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" 
+                            data-title="'.$row->title.'" 
+                            data-expensedate ="'.$row->expensedate.'"
+                            data-amount ="'.$row->amount.'"
+                            data-status ="'.$row->status.'"
+                            data-expensetype_id ="'.$row->expensetype_id.'"
+                            >
+                                        <i class="bi bi-gear btnicon"></i>
+                                    </a>';
+                        }
+
+                        if($user->hasAnyPermission(['အသုံးစာရင်း-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                                        <i class="bi bi-x btnicon"></i>
+                                    </a>';
+                        }
                         
                         $btn = $btn.'</div>';
     

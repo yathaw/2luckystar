@@ -9,9 +9,19 @@ use DataTables;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
+use Auth;
 
 class StaffController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:staff-အားလုံးကြည့်မည်');
+        $this->middleware('permission:staff-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:staff-အသေးစိတ်ကြည့်မည်', ['only' => ['show']]);
+        $this->middleware('permission:staff-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:staff-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         $roles = Role::get();
@@ -40,20 +50,30 @@ class StaffController extends Controller
                     ->addColumn('action', function($row){
                         $roleNames = $row->getRoleNames();
                         $roleid = $row->roles->first()->id;
+                        $user = Auth::user();
+
 
                         $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['staff-အသေးစိတ်ကြည့်မည်'])){
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-success mmfont detailBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="အသေးစိတ်ကြည့်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-email="'.$row->email.'" data-role="'.$roleNames[0].'">
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-success mmfont detailBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="အသေးစိတ်ကြည့်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-email="'.$row->email.'" data-role="'.$roleNames[0].'">
                                     <i class="bi bi-info btnicon"></i>
                                 </a>';
+                        }
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-email="'.$row->email.'" data-roleid="'.$roleid.'">
-                                    <i class="bi bi-gear btnicon"></i>
+                        if($user->hasAnyPermission(['staff-ပြင်ဆင်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'" data-email="'.$row->email.'" data-roleid="'.$roleid.'">
+                                        <i class="bi bi-gear btnicon"></i>
                                 </a>';
+                        }
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                        if($user->hasAnyPermission(['staff-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
                                     <i class="bi bi-x btnicon"></i>
                                 </a>';
+                        }
                         
                         $btn = $btn.'</div>';
     

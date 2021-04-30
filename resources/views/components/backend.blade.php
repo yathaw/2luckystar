@@ -53,7 +53,13 @@
     <link href="{{ asset('assets/vendors/filepond/filepond-plugin-image-preview.css') }}" rel="stylesheet">
 
 </head>
+@php
+    $user = Auth::user();
 
+    $roleid = $user->roles->first()->id;
+
+    $permissionNames = $user->getDirectPermissions();
+@endphp
 <body>
     <div id="app">
         <div id="sidebar" class="active">
@@ -105,12 +111,18 @@
                             </a>
                         </li>
 
+                        @if($user->hasAnyPermission(['အရောင်းအ၀ယ်စာရင်း-အားလုံးကြည့်မည်']))
+
                         <li class="sidebar-item  {{ Request::segment(1) === 'report' ? 'active' : '' }}">
                             <a href="{{ route('report.index') }}" class='sidebar-link'>
                                 <i class="bi bi-graph-up"></i>
                                 <span class="mmfont">အရောင်းအ၀ယ်စာရင်း</span>
                             </a>
                         </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['အသုံးစာရင်း-အားလုံးကြည့်မည်', 'အသုံးစာရင်း-အသစ်ထပ်ထည့်မည်', 'အသုံးစာရင်း-ပြင်ဆင်မည်', 'အသုံးစာရင်း-ဖျက်မည်']))
 
                         <li class="sidebar-item {{ Request::segment(1) === 'expense' ? 'active' : '' }}">
                             <a href="{{ route('expense.index') }}" class='sidebar-link'>
@@ -119,14 +131,25 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-title mmfont">ကုန်ပစ္စည်း</li>
+                        @endif
 
-                        <li class="sidebar-item {{ Request::segment(1) === 'sale' ? 'active' : '' }}">
-                            <a href="{{ route('sale.index') }}" class='sidebar-link'>
-                                <i class="bi bi-cart-fill"></i>
-                                <span class="mmfont">စျေးရောင်းမည်</span>
-                            </a>
-                        </li>
+                        @if($user->hasAnyPermission(['စျေးရောင်းမည်', 'ကားပစ္စည်း-အားလုံးကြည့်မည်', 'spa-အားလုံးကြည့်မည်']))
+
+                            <li class="sidebar-title mmfont">ကုန်ပစ္စည်း</li>
+                        @endif
+
+                        @if($user->hasAnyPermission(['စျေးရောင်းမည်']))
+
+                            <li class="sidebar-item {{ Request::segment(1) === 'sale' ? 'active' : '' }}">
+                                <a href="{{ route('sale.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-cart-fill"></i>
+                                    <span class="mmfont">စျေးရောင်းမည်</span>
+                                </a>
+                            </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['ကားပစ္စည်း-အားလုံးကြည့်မည်', 'ကားပစ္စည်း-အသစ်ထပ်ထည့်မည်', 'ကားပစ္စည်း-ပြင်ဆင်မည်', 'ကားပစ္စည်း-ဖျက်မည်']))
 
                         <li class="sidebar-item {{ Request::segment(1) === 'item' ? 'active' : '' }}">
                             <a href="{{ route('item.index') }}" class='sidebar-link'>
@@ -135,6 +158,10 @@
                             </a>
                         </li>
 
+                        @endif
+
+                        @if($user->hasAnyPermission(['spa-အားလုံးကြည့်မည်', 'spa-အသစ်ထပ်ထည့်မည်', 'spa-ပြင်ဆင်မည်', 'spa-ဖျက်မည်']))
+
                         <li class="sidebar-item {{ Request::segment(1) === 'spa' ? 'active' : '' }}">
                             <a href="{{ route('spa.index') }}" class='sidebar-link'>
                                 <i class="bi bi-bucket-fill"></i>
@@ -142,30 +169,54 @@
                             </a>
                         </li>
 
+                        @endif
+
+                        @if($user->hasAnyPermission(['staff-အားလုံးကြည့်မည်', 'supplier-အားလုံးကြည့်မည်', 'customer-အားလုံးကြည့်မည်']))
+
                         <li class="sidebar-title">People</li>
 
-                        <li class="sidebar-item {{ Request::segment(1) === 'staff' ? 'active' : '' }}">
-                            <a href="{{ route('staff.index') }}" class='sidebar-link'>
-                                <i class="bi bi-person-badge-fill"></i>
-                                <span> Staff </span>
-                            </a>
-                        </li>
+                        @endif
 
-                        <li class="sidebar-item {{ Request::segment(1) === 'supplier' ? 'active' : '' }} ">
-                            <a href="{{ route('supplier.index') }}" class='sidebar-link'>
-                                <i class="bi bi-people-fill"></i>
-                                <span> Supplier </span>
-                            </a>
-                        </li>
+                        @if($user->hasAnyPermission(['staff-အားလုံးကြည့်မည်', 'staff-အသစ်ထပ်ထည့်မည်', 'staff-ပြင်ဆင်မည်', 'staff-ဖျက်မည်']))
+
+                            <li class="sidebar-item {{ Request::segment(1) === 'staff' ? 'active' : '' }}">
+                                <a href="{{ route('staff.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-person-badge-fill"></i>
+                                    <span> Staff </span>
+                                </a>
+                            </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['supplier-အားလုံးကြည့်မည်', 'supplier-အသစ်ထပ်ထည့်မည်', 'supplier-ပြင်ဆင်မည်', 'supplier-ဖျက်မည်']))
+
+                            <li class="sidebar-item {{ Request::segment(1) === 'supplier' ? 'active' : '' }} ">
+                                <a href="{{ route('supplier.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-people-fill"></i>
+                                    <span> Supplier </span>
+                                </a>
+                            </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['customer-အားလုံးကြည့်မည်', 'customer-ဖျက်မည်']))
 
                         <li class="sidebar-item {{ Request::segment(1) === 'customer' ? 'active' : '' }} ">
                             <a href="{{ route('customer.index') }}" class='sidebar-link'>
                                 <i class="bi bi-person-check-fill"></i>
                                 <span> Customer </span>
                             </a>
-                        </li>                        
+                        </li> 
+
+                        @endif 
+
+                        @if($user->hasAnyPermission(['ကားအမျိုးအစား-အားလုံးကြည့်မည်', 'ထုတ်လုပ်သည့်နိုင်ငံ-အားလုံးကြည့်မည်', 'ပစ္စည်းအမျိုးအစား-အားလုံးကြည့်မည်', 'ကားအမှတ်တံဆိပ်-အားလုံးကြည့်မည်', 'အရောင်များ-အားလုံးကြည့်မည်']))
 
                         <li class="sidebar-title mmfont">အပိုစာမျက်နှာများ</li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['ကားအမျိုးအစား-အားလုံးကြည့်မည်', 'ကားအမျိုးအစား-အသစ်ထပ်ထည့်မည်', 'ကားအမျိုးအစား-ပြင်ဆင်မည်', 'ကားအမျိုးအစား-ဖျက်မည်']))
 
                         <li class="sidebar-item  {{ Request::segment(1) === 'car' ? 'active' : '' }} ">
                             <a href="{{ route('car.index') }}" class='sidebar-link'>
@@ -174,12 +225,21 @@
                             </a>
                         </li>
 
+                        @endif
+
+                        @if($user->hasAnyPermission(['ထုတ်လုပ်သည့်နိုင်ငံ-အားလုံးကြည့်မည်', 'ထုတ်လုပ်သည့်နိုင်ငံ-အသစ်ထပ်ထည့်မည်', 'ထုတ်လုပ်သည့်နိုင်ငံ-ပြင်ဆင်မည်', 'ထုတ်လုပ်သည့်နိုင်ငံ-ဖျက်မည်']))
+
+
                         <li class="sidebar-item {{ Request::segment(1) === 'country' ? 'active' : '' }} ">
                             <a href="{{ route('country.index') }}" class='sidebar-link'>
                                 <i class="bi bi-globe2"></i>
                                 <span class="mmfont">ထုတ်လုပ်သည့်နိုင်ငံ</span>
                             </a>
                         </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['ပစ္စည်းအမျိုးအစား-အားလုံးကြည့်မည်', 'ပစ္စည်းအမျိုးအစား-အသစ်ထပ်ထည့်မည်', 'ပစ္စည်းအမျိုးအစား-ပြင်ဆင်မည်', 'ပစ္စည်းအမျိုးအစား-ဖျက်မည်']))
 
                         <li class="sidebar-item  {{ Request::segment(1) === 'category' ? 'active' : '' }}">
                             <a href="{{ route('category.index') }}" class='sidebar-link'>
@@ -188,12 +248,20 @@
                             </a>
                         </li>
 
+                        @endif
+
+                        @if($user->hasAnyPermission(['ကားအမှတ်တံဆိပ်-အားလုံးကြည့်မည်', 'ကားအမှတ်တံဆိပ်-အသစ်ထပ်ထည့်မည်', 'ကားအမှတ်တံဆိပ်-ပြင်ဆင်မည်', 'ကားအမှတ်တံဆိပ်-ဖျက်မည်']))
+
                         <li class="sidebar-item {{ Request::segment(1) === 'brand' ? 'active' : '' }}">
                             <a href="{{ route('brand.index') }}" class='sidebar-link'>
                                 <i class="bi bi-award-fill"></i>
                                 <span class="mmfont"> ကားအမှတ်တံဆိပ် </span>
                             </a>
                         </li>
+
+                        @endif
+
+                        @if($user->hasAnyPermission(['အရောင်များ-အားလုံးကြည့်မည်', 'အရောင်များ-အသစ်ထပ်ထည့်မည်', 'အရောင်များ-ပြင်ဆင်မည်', 'အရောင်များ-ဖျက်မည်']))
 
                         <li class="sidebar-item  {{ Request::segment(1) === 'color' ? 'active' : '' }}">
                             <a href="{{ route('color.index') }}" class='sidebar-link'>
@@ -202,7 +270,7 @@
                             </a>
                         </li>
                         
-
+                        @endif
                         
 
                     </ul>

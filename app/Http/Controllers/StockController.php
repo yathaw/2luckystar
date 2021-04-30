@@ -9,12 +9,21 @@ use App\Models\Country;
 use App\Models\Color;
 use App\Models\Supplier;
 use App\Models\Stock;
+use Auth;
 
 use DataTables;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:ကားပစ္စည်းstock-အားလုံးကြည့်မည်', ['only' => ['getitemstockData']]);
+        $this->middleware('permission:ကားပစ္စည်းstock-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:ကားပစ္စည်းstock-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:ကားပစ္စည်းstock-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+
     public function getitemstockData($id)
     {
         $datas = Stock::where('item_id',$id)
@@ -40,15 +49,24 @@ class StockController extends Controller
                     })
                     ->addColumn('action', function($row){
 
+                        $user = Auth::user();
+
                         $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['ကားပစ္စည်းstock-ပြင်ဆင်မည်'])){
+
                        	$btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-stockdate="'.$row->stockdate.'" data-qty="'.$row->qty.'" data-pc="'.$row->pc.'" data-price="'.$row->price.'">
                                     <i class="bi bi-gear btnicon"></i>
                                 </a>';
 
+                        }
+
+                        if($user->hasAnyPermission(['ကားပစ္စည်းstock-ဖျက်မည်'])){
+
                         $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
                                     <i class="bi bi-x btnicon"></i>
                                 </a>';
-                        
+                        }
+
                         $btn = $btn.'</div>';
     
                         return $btn;

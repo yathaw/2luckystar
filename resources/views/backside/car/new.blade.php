@@ -151,85 +151,20 @@
                                 </div>
                             </div>
                         </section>
-                        <!-- Step 3 -->
 
-                        <h6 class="mmfont"> Supplier အချက်အလက်် </h6>
-                        <section>
-                            <div class="row">
-                                <div class="col-12">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home"
-                                                role="tab" aria-controls="home" aria-selected="true">New Supplier</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile"
-                                                role="tab" aria-controls="profile" aria-selected="false">Old Supplier</a>
-                                        </li>
-                                    </ul>
-
-                                    <div class="tab-content" id="myTabContent">
-                                        <div class="tab-pane fade show active" id="home" role="tabpanel"
-                                            aria-labelledby="home-tab">
-                                            <div class="row mt-3">
-
-                                                <div class="col-lg-4 col-md-6 col-12">
-                                                    <div class="form-group my-3">
-                                                        <label for="sup_name" class="mmfont"> နာမည် </label>
-                                                        <input type="text" class="form-control" id="sup_name" name="sup_name" value="{{ old('sup_name') }}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-4 col-md-6 col-12">
-                                                    <div class="form-group my-3">
-                                                        <label for="sup_phone" class="mmfont"> ဖုန်းနံပါတ် </label>
-                                                        <input type="text" class="form-control" id="sup_phone" name="sup_phone" value="{{ old('sup_phone') }}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-4 col-md-6 col-12">
-                                                    <div class="form-group my-3">
-                                                        <label for="sup_address" class="mmfont"> လိပ်စာ </label>
-                                                        <input type="text" class="form-control" id="sup_address" name="sup_address" value="{{ old('sup_address') }}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-12">
-                                                    <div class="form-group my-3">
-                                                        <label for="sup_note"> Note </label>
-                                                        <textarea class="form-control" name="sup_note" id="sup_note" rows="6">{{ old('sup_note') }}</textarea>
-                                                    </div>
-                                                    
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="profile" role="tabpanel"
-                                            aria-labelledby="profile-tab">
-                                            <div class="row mt-3">
-                                                <div class="col-12">
-                                                    <div class="form-group my-3">
-                                                        <label for="sup_existingsupplier"> Existing Supplier </label>
-                                                        <select placeholder="Choose Existing Supplier" data-allow-clear="1" class="form-control supplierchoice " id="sup_existingsupplier" name="sup_existingsupplier">
-                                                            @foreach($suppliers as $supplier)
-                                                            <option value="{{ $supplier->id }}"> 
-                                                                {{ $supplier->name }}
-                                                            </option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
                         <!-- Step 4 -->
                         <h6> Stock </h6>
                         <section>
                             <div class="row">
+                                <div class="col-12">
+                                    <select class="form-control supplierchoice " id="sup_existingsupplier" name="sup_existingsupplier">
+                                        @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}"> 
+                                            {{ $supplier->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group my-3">
                                         <label for="st_price" class="mmfont"> ၀ယ်စျေး :</label>
@@ -362,6 +297,8 @@
                maxItemCount: 5,
                removeItemButton: true,
             });
+
+            
 
         });
 

@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use DataTables;
+use Auth;
 
 class CategoryController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:ပစ္စည်းအမျိုးအစား-အားလုံးကြည့်မည်');
+        $this->middleware('permission:ပစ္စည်းအမျိုးအစား-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:ပစ္စည်းအမျိုးအစား-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:ပစ္စည်းအမျိုးအစား-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         return view('backside/category');
@@ -22,14 +31,22 @@ class CategoryController extends Controller
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
    
-                        $btn = '<div class="buttons">';
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'">
-                                    <i class="bi bi-gear btnicon"></i>
-                                </a>';
+                        $user = Auth::user();
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
-                                    <i class="bi bi-x btnicon"></i>
-                                </a>';
+                        $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['ပစ္စည်းအမျိုးအစား-ပြင်ဆင်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'">
+                                        <i class="bi bi-gear btnicon"></i>
+                                    </a>';
+                        }
+
+                        if($user->hasAnyPermission(['ပစ္စည်းအမျိုးအစား-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                                        <i class="bi bi-x btnicon"></i>
+                                    </a>';
+                        }
                         
                         $btn = $btn.'</div>';
     

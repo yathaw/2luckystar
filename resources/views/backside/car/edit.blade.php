@@ -215,30 +215,38 @@
             
 
             quill.clipboard.dangerouslyPasteHTML(`{!! $item->description !!}`);
+            var DBimage = "{{ $item->photo }}";
 
-            var images = <?= json_encode($item->photo) ?>;
-            var img_array = $.parseJSON(images);
-            console.log(img_array);
+            if (DBimage) {
+                var images = <?= json_encode($item->photo) ?>;
+                var img_array = $.parseJSON(images);
+                console.log(img_array);
 
-            var imgpre_arr=[];
+                var imgpre_arr=[];
 
 
-            for (i = 0; i < img_array.length; i++) 
-            {
-                var imgpre_obj={};
+                for (i = 0; i < img_array.length; i++) 
+                {
+                    var imgpre_obj={};
 
-                imgpre_obj.id = i;
-                imgpre_obj.src = img_array[i];
+                    imgpre_obj.id = i;
+                    imgpre_obj.src = img_array[i];
 
-                imgpre_arr.push(imgpre_obj);
+                    imgpre_arr.push(imgpre_obj);
+
+                }
+
+                $('.input-images').imageUploader({
+                   preloaded: imgpre_arr,
+                   preloadedInputName: 'oldPhoto',
+                });
+            }
+            
+
+            else{
+                $('.input-images').imageUploader();
 
             }
-
-
-            $('.input-images').imageUploader({
-               preloaded: imgpre_arr,
-               preloadedInputName: 'oldPhoto',
-            });
 
             
 

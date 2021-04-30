@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+	function __construct()
+    {
+        $this->middleware('permission:အရောင်းအ၀ယ်စာရင်း-အားလုံးကြည့်မည်', ['only' => ['index']]);
+    }
+
     public function index(){
     	$now = Carbon::now();
 	    $month = $now->format('F');
@@ -99,7 +104,7 @@ class ReportController extends Controller
         $suppliers = Supplier::count();
         $customers = Customer::count();
 
-        $period = now()->subMonths(11)->monthsUntil(now());
+        $period = now()->subMonths(12)->monthsUntil(now());
 
 		$datedatas = [];
 		foreach ($period as $date)
@@ -112,6 +117,8 @@ class ReportController extends Controller
 		   ];
 		}
 		asort($datedatas);
+
+		// dd($datedatas);
 
 		$datas = [];
 
@@ -129,6 +136,8 @@ class ReportController extends Controller
 	        	'total' => $sale
  	        ];
 		}
+
+		// dd($datas);
 
     	return view('backside.dashboard',compact('sale','items','suppliers','customers','datas'));
     }

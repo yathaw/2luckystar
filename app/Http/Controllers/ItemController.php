@@ -16,6 +16,16 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:ကားပစ္စည်း-အားလုံးကြည့်မည်');
+        $this->middleware('permission:ကားပစ္စည်း-အသစ်ထပ်ထည့်မည်', ['only' => ['create','store']]);
+        $this->middleware('permission:ကားပစ္စည်း-အသေးစိတ်ကြည့်မည်', ['only' => ['show']]);
+
+        $this->middleware('permission:ကားပစ္စည်း-ပြင်ဆင်မည်', ['only' => ['edit','update']]);
+        $this->middleware('permission:ကားပစ္စည်း-ဖျက်မည်', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         $suppliers = Supplier::latest()->get();
@@ -65,24 +75,37 @@ class ItemController extends Controller
                     
                     ->addColumn('action', function($row){
 
+                        $user = Auth::user();
+
                         $btn = '<div class="buttons">';
+                        if($user->hasAnyPermission(['ကားပစ္စည်းstock-အသစ်ထပ်ထည့်မည်'])){
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-primary mmfont stockBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="Stock ထပ်ထည့်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'"> 
-                                    <i class="bi bi-bag-plus-fill btnicon"></i>
-                                </a>';
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-primary mmfont stockBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="Stock ထပ်ထည့်မည်" data-id="'.$row->id.'" data-name="'.$row->name.'"> 
+                                        <i class="bi bi-bag-plus-fill btnicon"></i>
+                                    </a>';
+                        }
 
-                        $btn = $btn.'<a href="'.route("item.show",$row->id).'" class="btn icon btn-success mmfont" data-bs-toggle="tooltip" data-bs-placement="top" title="အသေးစိတ်ကြည့်မည်">
-                                    <i class="bi bi-info btnicon"></i>
-                                </a>';
+                        if($user->hasAnyPermission(['ကားပစ္စည်း-အသေးစိတ်ကြည့်မည်'])){
 
+                            $btn = $btn.'<a href="'.route("item.show",$row->id).'" class="btn icon btn-success mmfont" data-bs-toggle="tooltip" data-bs-placement="top" title="အသေးစိတ်ကြည့်မည်">
+                                        <i class="bi bi-info btnicon"></i>
+                                    </a>';
+                        }
 
-                        $btn = $btn.'<a href="'.route("item.edit",$row->id).'" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်">
+                        if($user->hasAnyPermission(['ကားပစ္စည်း-ပြင်ဆင်မည်'])){
+
+                            $btn = $btn.'<a href="'.route("item.edit",$row->id).'" class="btn icon btn-warning text-dark mmfont editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ပြင်ဆင်မည်">
                                     <i class="bi bi-gear btnicon"></i>
                                 </a>';
 
-                        $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
+                        }
+
+                        if($user->hasAnyPermission(['ကားပစ္စည်း-ဖျက်မည်'])){
+
+                            $btn = $btn.'<a href="javascript:void(0)" class="btn icon btn-danger mmfont deleteBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="ဖျက်ပစ်မည်" data-id="'.$row->id.'">
                                     <i class="bi bi-x btnicon"></i>
                                 </a>';
+                        }
                         
                         $btn = $btn.'</div>';
     
@@ -179,32 +202,8 @@ class ItemController extends Controller
         $item->save();
 
 
-        // SUPPLIER
-            // NEW
-        $sup_name = $request->sup_name;
-        $sup_phone = $request->sup_phone;
-        $sup_address = $request->sup_address;
-        $sup_note = $request->sup_note;
-            // OLD
-        $sup_existingsupplier = $request->sup_existingsupplier;
-
-        if ($sup_existingsupplier) 
-        {
-            $supplier_id = $sup_existingsupplier;
-        }
-        else
-        {
-            $supplier= new Supplier();
-            $supplier->name=$sup_name;
-            $supplier->phoneno=$sup_phone;
-            $supplier->address=$sup_address;
-            $supplier->note=$sup_note;
-            $supplier->user_id=1;
-            $supplier->save();
-
-            $supplier_id = $supplier->id;
-        }
-
+        
+            $supplier_id = $request->sup_existingsupplier;
 
         // STOCK 
         $st_price = $request->st_price;

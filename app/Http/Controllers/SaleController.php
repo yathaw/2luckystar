@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:စျေးရောင်းမည်');
+        // $this->middleware('permission:စျေးရောင်းမည်', ['only' => ['index', 'store', 'show', 'spa_fetch_data', 'item_fetch_data', 'salesearch']]);
+    }
+
     public function index()
     {
         $items = Item::latest()->paginate(6);

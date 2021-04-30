@@ -19,6 +19,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FrontendController;
 
 
 /*
@@ -32,84 +33,96 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
+// Frontend
+Route::get('/',[FrontendController::class,'index'])->name('home');
+Route::get('accessory',[FrontendController::class,'accessory'])->name('accessory');
+Route::get('info/{id}',[FrontendController::class,'info'])->name('info');
+
+Route::get('service',[FrontendController::class,'service'])->name('service');
+Route::get('detail/{id}',[FrontendController::class,'detail'])->name('detail');
+
+
+
 Route::get('login',[LoginController::class,'showLoginForm']);
 Route::post('login',[LoginController::class,'login'])->name('login');
 Route::post('logout',[LoginController::class,'logout'])->name('logout');
 
+Route::group(['middleware' => ['auth']], function () {
 
-// Color
-Route::resource('/color', ColorController::class);
-Route::get('/getlistColors',[ColorController::class, 'getlistData'])->name('getlistColors');
+	// Color
+	Route::resource('/color', ColorController::class);
+	Route::get('/getlistColors',[ColorController::class, 'getlistData'])->name('getlistColors');
 
-// Brand
-Route::resource('/brand', BrandController::class);
-Route::get('/getlistBrands',[BrandController::class, 'getlistData'])->name('getlistBrands');
+	// Brand
+	Route::resource('/brand', BrandController::class);
+	Route::get('/getlistBrands',[BrandController::class, 'getlistData'])->name('getlistBrands');
 
-// Category
-Route::resource('/category', CategoryController::class);
-Route::get('/getlistCategories',[CategoryController::class, 'getlistData'])->name('getlistCategories');
+	// Category
+	Route::resource('/category', CategoryController::class);
+	Route::get('/getlistCategories',[CategoryController::class, 'getlistData'])->name('getlistCategories');
 
-// Country
-Route::resource('/country', CountryController::class);
-Route::get('/getlistCountries',[CountryController::class, 'getlistData'])->name('getlistCountries');
+	// Country
+	Route::resource('/country', CountryController::class);
+	Route::get('/getlistCountries',[CountryController::class, 'getlistData'])->name('getlistCountries');
 
-// Car
-Route::resource('/car', CarController::class);
-Route::get('/getlistCars',[CarController::class, 'getlistData'])->name('getlistCars');
+	// Car
+	Route::resource('/car', CarController::class);
+	Route::get('/getlistCars',[CarController::class, 'getlistData'])->name('getlistCars');
 
-// SPA
-Route::resource('/spa', SpaController::class);
-Route::get('/getlistSpas',[SpaController::class, 'getlistData'])->name('getlistSpas');
-
-
-// Item
-Route::resource('/item', ItemController::class);
-Route::get('/getlistItems',[ItemController::class, 'getlistData'])->name('getlistItems');
+	// SPA
+	Route::resource('/spa', SpaController::class);
+	Route::get('/getlistSpas',[SpaController::class, 'getlistData'])->name('getlistSpas');
+	Route::post('/spa/update/{id}',[SpaController::class, 'update'])->name('spa.update');
 
 
-Route::get('/getitemStocks/{id}',[StockController::class,  'getitemstockData'])->name('getitemStocks');
-Route::get('/additemStock/{id}',[StockController::class, 'additemStock'])->name('additemStock');
-Route::get('/edititemStock/{id}',[StockController::class, 'edititemStock'])->name('edititemStock');
-Route::get('/destroyitemStock/{id}',[StockController::class, 'destroyitemStock'])->name('destroyitemStock');
+	// Item
+	Route::resource('/item', ItemController::class);
+	Route::get('/getlistItems',[ItemController::class, 'getlistData'])->name('getlistItems');
 
 
-// Sale
-Route::resource('/sale', SaleController::class);
-Route::get('/getlistSales',[SaleController::class, 'getlistData'])->name('getlistSales');
+	Route::get('/getitemStocks/{id}',[StockController::class,  'getitemstockData'])->name('getitemStocks');
+	Route::get('/additemStock/{id}',[StockController::class, 'additemStock'])->name('additemStock');
+	Route::get('/edititemStock/{id}',[StockController::class, 'edititemStock'])->name('edititemStock');
+	Route::get('/destroyitemStock/{id}',[StockController::class, 'destroyitemStock'])->name('destroyitemStock');
 
-Route::get('pagination/spa_fetch_data', [SaleController::class, 'spa_fetch_data']);
-Route::get('pagination/item_fetch_data', [SaleController::class, 'item_fetch_data']);
 
-Route::post('salesearch',[SaleController::class, 'salesearch'])->name('salesearch');
+	// Sale
+	Route::resource('/sale', SaleController::class);
+	Route::get('/getlistSales',[SaleController::class, 'getlistData'])->name('getlistSales');
 
-// Expense
-Route::resource('/expense', ExpenseController::class);
-Route::get('/getlistExpenses',[ExpenseController::class, 'getlistData'])->name('getlistExpenses');
-Route::get('/getmomentTotal',[ExpenseController::class, 'gettotalData'])->name('getmomentTotal');
+	Route::get('pagination/spa_fetch_data', [SaleController::class, 'spa_fetch_data']);
+	Route::get('pagination/item_fetch_data', [SaleController::class, 'item_fetch_data']);
 
-Route::post('/searchExpense',[ExpenseController::class, 'getsearchExpense'])->name('searchExpense');
-Route::post('/searchExpensetotal',[ExpenseController::class, 'getsearchExpensetotal'])->name('searchExpensetotal');
+	Route::post('salesearch',[SaleController::class, 'salesearch'])->name('salesearch');
 
-// Supplier
-Route::resource('/supplier', SupplierController::class);
-Route::get('/getlistSuppliers',[SupplierController::class, 'getlistData'])->name('getlistSuppliers');
+	// Expense
+	Route::resource('/expense', ExpenseController::class);
+	Route::get('/getlistExpenses',[ExpenseController::class, 'getlistData'])->name('getlistExpenses');
+	Route::get('/getmomentTotal',[ExpenseController::class, 'gettotalData'])->name('getmomentTotal');
 
-// Customer
-Route::resource('/customer', CustomerController::class);
-Route::get('/getlistCustomers',[CustomerController::class, 'getlistData'])->name('getlistCustomers');
+	Route::post('/searchExpense',[ExpenseController::class, 'getsearchExpense'])->name('searchExpense');
+	Route::post('/searchExpensetotal',[ExpenseController::class, 'getsearchExpensetotal'])->name('searchExpensetotal');
 
-// Staff
-Route::resource('/staff', StaffController::class);
-Route::get('/getlistStaff',[StaffController::class, 'getlistData'])->name('getlistStaff');
-Route::post('/getPermission_byUserid',[StaffController::class, 'getPermission_byUserid'])->name('getPermission_byUserid');
+	// Supplier
+	Route::resource('/supplier', SupplierController::class);
+	Route::get('/getlistSuppliers',[SupplierController::class, 'getlistData'])->name('getlistSuppliers');
 
-// Profile
-Route::resource('/profile',ProfileController::class);
-Route::post('/changepassword',[ProfileController::class,'changepassword'])->name('changepassword');
-Route::post('/changeprofile',[ProfileController::class, 'changeprofile'])->name('changeprofile');
+	// Customer
+	Route::resource('/customer', CustomerController::class);
+	Route::get('/getlistCustomers',[CustomerController::class, 'getlistData'])->name('getlistCustomers');
 
-// Report
-Route::resource('/report',ReportController::class);
+	// Staff
+	Route::resource('/staff', StaffController::class);
+	Route::get('/getlistStaff',[StaffController::class, 'getlistData'])->name('getlistStaff');
+	Route::post('/getPermission_byUserid',[StaffController::class, 'getPermission_byUserid'])->name('getPermission_byUserid');
 
-Route::get('/dashboard',[ReportController::class, 'dashboard'])->name('dashboard');
+	// Profile
+	Route::resource('/profile',ProfileController::class);
+	Route::post('/changepassword',[ProfileController::class,'changepassword'])->name('changepassword');
+	Route::post('/changeprofile',[ProfileController::class, 'changeprofile'])->name('changeprofile');
+
+	// Report
+	Route::resource('/report',ReportController::class);
+	Route::get('/dashboard',[ReportController::class, 'dashboard'])->name('dashboard');
+});
 

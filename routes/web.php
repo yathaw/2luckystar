@@ -19,7 +19,6 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\FrontendController;
 
 
 /*
@@ -33,19 +32,10 @@ use App\Http\Controllers\FrontendController;
 |
 */
 
-// Frontend
-Route::get('/',[FrontendController::class,'index'])->name('home');
-Route::get('accessory',[FrontendController::class,'accessory'])->name('accessory');
-Route::get('info/{id}',[FrontendController::class,'info'])->name('info');
-
-Route::get('service',[FrontendController::class,'service'])->name('service');
-Route::get('detail/{id}',[FrontendController::class,'detail'])->name('detail');
-
-
+Route::get('/',[LoginController::class,'showLoginForm']);
 
 Route::get('login',[LoginController::class,'showLoginForm']);
 Route::post('login',[LoginController::class,'login'])->name('login');
-Route::post('logout',[LoginController::class,'logout'])->name('logout');
 
 Route::group(['middleware' => ['auth']], function () {
 

@@ -94,9 +94,15 @@ $(document).ready(function() {
 	                                if (status == 'spa') {
 	                                	searchResult += `<p> ${price} </p>`;
 	                                }else{
-	                                	searchResult += `<p> ${price} 
-	                                						<span class="badge bg-light-danger float-end mmfont "> ${currentstock} ခု </span>
-	                                					</p>`;
+	                                	searchResult += `<p> ${price}`; 
+
+                                    if(currentstock <= 0){
+                                        searchResult += `<span class="badge bg-light-danger float-end mmfont "> 0 ခု </span>`;
+                                    }else{
+                                        searchResult += `<span class="badge bg-light-danger float-end mmfont "> ${currentstock} ခု </span>`;
+                                    }
+	                                						
+	                                	searchResult += `</p>`;
 
 	                                }
 	                                searchResult += `</button>
@@ -148,6 +154,54 @@ $(document).ready(function() {
 
     // Shopping Cart Btn
     $(".tab-pane").on('click','.shoppingcartBtn',function(e){
+        e.preventDefault();
+
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var price = $(this).data('price');
+        var codeno = $(this).data('codeno');
+        var status = $(this).data('status');
+
+        var qty = 1;
+
+        var item = {id:id, codeno:codeno, name:name, price:price, qty:qty, status:status};
+        
+        var itemString=localStorage.getItem("itemlist");
+        var itemArray;
+
+        if (itemString==null) {
+            itemArray=Array();
+        }
+        else{
+            itemArray=JSON.parse(itemString);
+        }
+
+        console.log(itemArray);
+
+        var status=false;
+
+        $.each(itemArray,function(i,v){
+            if (id==v.id){
+                status=true;
+                v.qty++;
+            }
+        })
+
+        if (!status){
+            itemArray.push(item);
+        }
+
+        var itemData=JSON.stringify(itemArray);
+
+        localStorage.setItem("itemlist",itemData);
+
+        cartNoti();
+        shoppingCart();
+        
+    });
+
+    // Shopping Cart Btn
+    $("#searchresultDiv").on('click','.shoppingcartBtn',function(e){
         e.preventDefault();
 
         var id = $(this).data('id');

@@ -98,13 +98,13 @@ class ReportController extends Controller
 	   	$date = $now->toDateString();
 
 	   	// Sale
-        $sale = Sale::where('saledate', $date)->sum('total');
+        $saletotal = Sale::where('saledate', $date)->sum('total');
 
         $items = Item::count();
         $suppliers = Supplier::count();
         $customers = Customer::count();
 
-        $period = now()->subMonths(12)->monthsUntil(now());
+        $period = now()->subMonths(11)->monthsUntil(now());
 
 		$datedatas = [];
 		foreach ($period as $date)
@@ -139,6 +139,6 @@ class ReportController extends Controller
 
 		// dd($datas);
 
-    	return view('backside.dashboard',compact('sale','items','suppliers','customers','datas'));
+    	return view('backside.dashboard',compact('saletotal','items','suppliers','customers','datas'));
     }
 }

@@ -26,7 +26,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold mmfont"> ဒီနေ့ရောင်းရငွေ </h6>
-                                        <h6 class="font-extrabold mb-0">{{ number_format($sale) }} Ks </h6>
+                                        <h6 class="font-extrabold mb-0">{{ number_format($saletotal) }} Ks </h6>
                                     </div>
                                 </div>
                             </div>
